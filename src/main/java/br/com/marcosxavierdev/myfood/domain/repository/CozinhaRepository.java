@@ -4,11 +4,14 @@ import java.util.List;
 
 import br.com.marcosxavierdev.myfood.domain.model.Cozinha;
 
-public interface CozinhaRepository  {
-	
-	List<Cozinha> listrar ();
-	Cozinha buscar (Long id);
-	Cozinha salvar (Cozinha cozinha);
-	void remover (Cozinha cozinhas);
+public interface CozinhaRepository {
+
+	List<Cozinha> listrar();
+
+	Cozinha buscar(Long id);
+
+	Cozinha salvar(Cozinha cozinha);
+
+	void remover(Cozinha cozinhas);
 
 }
