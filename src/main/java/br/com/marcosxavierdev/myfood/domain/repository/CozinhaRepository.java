@@ -6,9 +6,9 @@ import br.com.marcosxavierdev.myfood.domain.model.Cozinha;
 
 public interface CozinhaRepository  {
 	
-	List<Cozinha> todas ();
-	Cozinha porId (Long id);
-	Cozinha adicionar (Cozinha cozinha);
+	List<Cozinha> listrar ();
+	Cozinha buscar (Long id);
+	Cozinha salvar (Cozinha cozinha);
 	void remover (Cozinha cozinhas);
 
 }
