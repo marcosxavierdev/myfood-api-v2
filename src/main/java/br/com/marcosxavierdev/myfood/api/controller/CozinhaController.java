@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +60,22 @@ public class CozinhaController {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	
+	
+	@DeleteMapping("/{cozinhaId}")
+	public ResponseEntity<Cozinha> remover (@PathVariable Long cozinhaId) {
+		try {	
+			Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
+			if(cozinha != null) {
+				cozinhaRepository.remover(cozinha);
+				return ResponseEntity.noContent().build();
+			}
+			return ResponseEntity.notFound().build();
+			
+		} catch (DataIntegrityViolationException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
+	}
 
 }
 
@@ -106,11 +124,16 @@ public class CozinhaController {
  * @RequestBody - define que o parametro vai receber o corpo da requisição
  * 
  * BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
- * cozinha -  cozinha que vem body
- * cozinhaAtual - cozinha retornada da busca
- * "id" - id que sera ignorado da cozinha do body para que a cozinhaAtual, nao fique com o id null
+ * cozinha -  origem (copia dos dados da cozinha que vem body (com id null))
+ * cozinhaAtual - destino (cola os dados da origem para ac ozinha retornada da busca 
+ * (que copiou o id null da instancia que veio no body))
+ * "id" - parametro que indica uma propriedade a ser ignorada, nao copiando o id
  * 
+ * return ResponseEntity.status(HttpStatus.CONFLICT).build();
+ * (HttpStatus.CONFLICT) - 409 conflict por causa da possibilidade da exclusao violar uma constraint do banco 
  * 
- * 
+ * 200 - objeto com id náo vinculado como fk em outra tabela
+ * 404 - objeto não existe
+ * 409 - objeto com id vinculada como fk em outra tabela
  * 
  */
