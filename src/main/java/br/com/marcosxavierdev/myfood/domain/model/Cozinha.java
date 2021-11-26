@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +22,7 @@ public class Cozinha {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column (nullable=false)
+	@Column(nullable = false)
 	private String nome;
 
 }
@@ -37,7 +40,8 @@ public class Cozinha {
  * @Column(name = "nome_cozinha") - define algumas configurações do atributo
  * (coluna) da entidade, nesse caso o nome do campo na tabela.
  * 
- * @Column (nullable = false) - define que o campo nao pode ser nulo (pode ser nulo = falso) no banco de dados
+ * @Column (nullable = false) - define que o campo nao pode ser nulo (pode ser
+ * nulo = falso) no banco de dados
  * 
  * @GeneratedValue(strategy = GenerationType.IDENTITY) - configura a
  * responsabilidade do auto-incremento para o banco de dados
@@ -51,5 +55,10 @@ public class Cozinha {
  * incluido explictamente
  * 
  * @EqualsAndHashCode.Include - inclue as solicitações explicitas
+ * 
+ * @JsonProperty("titulo") - altera a representação da propriedade no Json, mas
+ * nao muda o nome da propriedade na entidade (modelo de domínio).
+ * 
+ * @JsonIgnore - faz com que a representacao nao aparareça no json.
  * 
  */
