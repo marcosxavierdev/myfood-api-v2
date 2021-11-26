@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.marcosxavierdev.myfood.domain.exception.EntidadeEmUsoException;
+import br.com.marcosxavierdev.myfood.domain.exception.EntidadeNaoEncontradaException;
 import br.com.marcosxavierdev.myfood.domain.model.Cozinha;
 import br.com.marcosxavierdev.myfood.domain.repository.CozinhaRepository;
+import br.com.marcosxavierdev.myfood.domain.service.CadastroCozinhaService;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -27,6 +29,9 @@ public class CozinhaController {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	private CadastroCozinhaService cadastroCozinhaService;
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
@@ -46,7 +51,7 @@ public class CozinhaController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
-		return cozinhaRepository.salvar(cozinha);
+		return cadastroCozinhaService.salvar(cozinha);
 	}
 	
 	@PutMapping("/{cozinhaId}")
@@ -65,16 +70,16 @@ public class CozinhaController {
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover (@PathVariable Long cozinhaId) {
 		try {	
-			Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-			if(cozinha != null) {
-				cozinhaRepository.remover(cozinha);
-				return ResponseEntity.noContent().build();
-			}
+			cadastroCozinhaService.excluir(cozinhaId);
+			return ResponseEntity.noContent().build();
+			
+		} catch (EntidadeNaoEncontradaException exception) {
 			return ResponseEntity.notFound().build();
 			
-		} catch (DataIntegrityViolationException exception) {
+		} catch (EntidadeEmUsoException exception) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
+		
 	}
 
 }
@@ -87,6 +92,8 @@ public class CozinhaController {
  *
  * @RequestMapping("/cozinhas") - define o mapeamento do uri para acessar o
  * controlador
+ * 
+ * @autowired - injeção de dependencias
  * 
  * @GetMapping - mapeamento para um requisicão GET
  * 
