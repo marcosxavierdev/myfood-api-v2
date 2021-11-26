@@ -33,8 +33,7 @@ public class CozinhaController {
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
 
-	@ResponseStatus(HttpStatus.OK)
-	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@GetMapping
 	public List<Cozinha> listar() {
 		return cozinhaRepository.listar();
 	}
@@ -60,7 +59,7 @@ public class CozinhaController {
 		if(cozinhaAtual != null) {
 //			cozinhaAtual.setNome(cozinha.getNome());
 			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
-			cozinhaAtual = cozinhaRepository.salvar(cozinhaAtual);
+			cozinhaAtual = cadastroCozinhaService.salvar(cozinhaAtual);
 			return ResponseEntity.ok(cozinhaAtual);
 		}
 		return ResponseEntity.notFound().build();
@@ -84,8 +83,9 @@ public class CozinhaController {
 
 }
 
-/*
- * @Controller - define a classe como um controller
+/* usar service para alteração diretas de dados, pode usar repository apenas para buscas
+ * 
+ *  * @Controller - define a classe como um controller
  * 
  * @ResponseBody - define que a resposta dos metodos serão enviadas como
  * resposta da requisição
